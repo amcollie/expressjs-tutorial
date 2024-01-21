@@ -4,6 +4,8 @@ import { mockUsers } from '../mock-data/data'
 
 const app = express()
 
+app.use(express.json())
+
 const PORT = process.env.PORT || 3000
 
 app.get('/', (req, res) => {
@@ -16,7 +18,7 @@ app.get('/api/users', (req, res) => {
         filter,
         value,
     } = req.query
-    
+
     if (filter && value) {
         return res.send(mockUsers.filter(user => user[filter].includes(value)))
     }
@@ -38,6 +40,22 @@ app.get('/api/users/:id', (req, res) => {
     return res.send({user})
 })
 
+app.post('/api/users', (req, res) => {
+    const {
+        username,
+        displayName,
+    } = req.body
+
+    const newUser = {
+        id: mockUsers[mockUsers.length - 1].id + 1,
+        username,
+        displayName,
+    }
+
+    mockUsers.push(newUser)
+
+    return res.status(201).send({newUser})
+})
 app.get('/api/products', (req, res) => {
     res.send([
         {
