@@ -1,5 +1,7 @@
 import express from 'express'
 
+import { mockUsers } from '../mock-data/data'
+
 const app = express()
 
 const PORT = process.env.PORT || 3000
@@ -9,23 +11,21 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/users', (req, res) => {
-    res.send([
-        {
-            id: 1,
-            username: 'john_doe',
-            displayName: 'John Doe',
-        },
-        {
-            id: 2,
-            username: 'jane_doe',
-            displayName: 'Jane Doe',
-        },
-        {
-            id: 3,
-            username: 'john_smith',
-            displayName: 'John Smith',
-        }
-    ])
+    res.send(mockUsers)
+})
+
+app.get('/api/users/:id', (req, res) => {
+    const user_id = parseInt(req.params.id)
+    if (isNaN(user_id)) {
+        return res.status(400).send({msg: 'Invalid user id'})
+    }
+
+    const user = mockUsers.find(user => user.id === user_id)
+    if (!user) {
+        return res.status(404).send({msg: 'User not found'})
+    }
+
+    return res.send({user})
 })
 
 app.get('/api/products', (req, res) => {
