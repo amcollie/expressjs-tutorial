@@ -56,6 +56,31 @@ app.post('/api/users', (req, res) => {
 
     return res.status(201).send({newUser})
 })
+
+app.put('/api/users/:id', (req, res) => {
+    const {
+        body,
+        params: { id }
+    } = req
+
+    const user_id = parseInt(id)
+    if (isNaN(user_id)) {
+        return res.status(400).send({msg: 'Invalid user id'})
+    }
+
+    const userIndex = mockUsers.findIndex(user => user.id === user_id)
+    if (userIndex === -1) {
+        return res.status(404).send({msg: 'User not found'})
+    }
+
+    mockUsers[userIndex] =  {
+        id : user_id,
+        ...body,
+    }
+
+    return res.sendStatus(204)
+})
+
 app.get('/api/products', (req, res) => {
     res.send([
         {
